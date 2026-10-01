@@ -142,7 +142,11 @@ export default function MenuScreen() {
 
       <CartBar onOpen={() => setCartOpen(true)} />
       <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)} />
-      <CartSheet open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartSheet
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        onCallWaiter={handleCallWaiter}
+      />
       <Toast message={toast} />
     </div>
   );

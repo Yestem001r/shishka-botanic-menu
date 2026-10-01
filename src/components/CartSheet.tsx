@@ -1,23 +1,36 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, Minus, Plus, X } from "lucide-react";
+import { BellRing, CheckCircle2, Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../lib/format";
+import type { Dish } from "../data/menu";
 import FadeImage from "./FadeImage";
+
+interface PlacedOrder {
+  items: { dish: Dish; qty: number }[];
+  total: number;
+}
 
 export default function CartSheet({
   open,
   onClose,
+  onCallWaiter,
 }: {
   open: boolean;
   onClose: () => void;
+  onCallWaiter: () => void;
 }) {
   const { items, total, add, remove, clear } = useCart();
-  const [placed, setPlaced] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
 
   const handleClose = () => {
     onClose();
-    setTimeout(() => setPlaced(false), 300);
+    setTimeout(() => setPlacedOrder(null), 300);
+  };
+
+  const handlePlace = () => {
+    setPlacedOrder({ items, total: Math.round(total * 1.11) });
+    clear();
   };
 
   return (
@@ -38,27 +51,56 @@ export default function CartSheet({
             transition={{ type: "spring", damping: 30, stiffness: 260 }}
             className="absolute inset-x-0 bottom-0 z-50 flex max-h-[85%] flex-col overflow-hidden rounded-t-[18px] bg-surface px-4 pb-4 pt-5"
           >
-            {placed ? (
-              <div className="flex flex-col items-center py-10 text-center">
+            {placedOrder ? (
+              <div className="flex flex-col py-2 text-center">
                 <motion.div
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", damping: 14 }}
+                  className="self-center"
                 >
-                  <CheckCircle2 size={52} className="text-forest-500" />
+                  <CheckCircle2 size={48} className="text-forest-500" />
                 </motion.div>
-                <h3 className="mt-4 text-[20px] font-semibold text-ink-900">
-                  Заказ отправлен!
+                <h3 className="mt-3 text-[20px] font-semibold text-ink-900">
+                  Отличный выбор!
                 </h3>
-                <p className="mt-2 max-w-[240px] text-[14px] text-ink-700">
-                  Официант уже несёт его на кухню. Среднее время ожидания — 20
-                  минут.
+                <p className="mx-auto mt-1.5 max-w-[260px] text-[14px] text-ink-700">
+                  Покажите этот экран официанту, чтобы подтвердить заказ
                 </p>
+
+                <div className="mt-5 space-y-1.5 rounded-xl bg-surface-alt p-3.5 text-left">
+                  {placedOrder.items.map(({ dish, qty }) => (
+                    <div
+                      key={dish.id}
+                      className="flex items-center justify-between gap-3 text-[14px]"
+                    >
+                      <span className="text-ink-900">
+                        {dish.name}{" "}
+                        <span className="text-ink-500">×{qty}</span>
+                      </span>
+                      <span className="shrink-0 text-ink-700">
+                        {formatPrice(dish.price * qty)}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="flex items-center justify-between border-t border-line pt-2 text-[15px] font-semibold text-ink-900">
+                    <span>Итого</span>
+                    <span>{formatPrice(placedOrder.total)}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={onCallWaiter}
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-forest-600 py-3.5 text-[14px] font-semibold text-white active:scale-[0.98] transition-transform"
+                >
+                  <BellRing size={15} />
+                  Позвать официанта
+                </button>
                 <button
                   onClick={handleClose}
-                  className="mt-6 w-full rounded-xl bg-forest-600 py-3.5 text-[14px] font-semibold text-white active:scale-[0.98] transition-transform"
+                  className="mt-2.5 w-full rounded-xl bg-surface-alt py-3.5 text-[14px] font-semibold text-ink-900 active:scale-[0.98] transition-transform"
                 >
-                  Вернуться в меню
+                  Готово
                 </button>
               </div>
             ) : (
@@ -129,10 +171,7 @@ export default function CartSheet({
                       <span>{formatPrice(Math.round(total * 1.11))}</span>
                     </div>
                     <button
-                      onClick={() => {
-                        setPlaced(true);
-                        clear();
-                      }}
+                      onClick={handlePlace}
                       className="mt-4 w-full rounded-xl bg-forest-600 py-4 text-[15px] font-semibold text-white shadow-float active:scale-[0.98] transition-transform"
                     >
                       Оформить заказ
