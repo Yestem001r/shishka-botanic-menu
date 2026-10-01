@@ -20,7 +20,7 @@ export default function Header({
   const { count } = useFavorites();
 
   return (
-    <div className="flex items-center gap-2 bg-bg/95 px-4 pb-1 pt-4 backdrop-blur-sm">
+    <div className="flex items-center gap-2 bg-bg px-4 pb-1 pt-4">
       <AnimatePresence mode="wait" initial={false}>
         {searchOpen ? (
           <motion.div

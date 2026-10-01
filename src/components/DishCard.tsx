@@ -1,5 +1,4 @@
 import { Heart, Minus, Plus } from "lucide-react";
-import { motion } from "framer-motion";
 import type { Dish } from "../data/menu";
 import { formatPrice } from "../lib/format";
 import { useCart } from "../context/CartContext";
@@ -19,11 +18,7 @@ export default function DishCard({
   const fav = isFavorite(dish.id);
 
   return (
-    <motion.button
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px 0px" }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+    <button
       onClick={() => onOpen(dish)}
       className="flex w-full items-start gap-3 border-b border-line py-4 text-left last:border-b-0"
     >
@@ -104,6 +99,6 @@ export default function DishCard({
           )}
         </div>
       </div>
-    </motion.button>
+    </button>
   );
 }

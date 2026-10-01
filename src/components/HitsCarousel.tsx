@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import type { Dish } from "../data/menu";
 import { formatPrice } from "../lib/format";
@@ -19,12 +18,9 @@ export default function HitsCarousel({
     <section className="pt-4">
       <h2 className="mb-3 px-4 text-[20px] font-bold text-ink-900">Хиты продаж</h2>
       <div className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-1">
-        {dishes.map((dish, i) => (
-          <motion.button
+        {dishes.map((dish) => (
+          <button
             key={dish.id}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: i * 0.05, ease: "easeOut" }}
             onClick={() => onOpen(dish)}
             className="relative w-[150px] shrink-0 overflow-hidden rounded-xl text-left active:scale-[0.97] transition-transform duration-200"
           >
@@ -55,7 +51,7 @@ export default function HitsCarousel({
                 <p className="mt-1 text-[13px] text-white/90">{formatPrice(dish.price)}</p>
               </div>
             </div>
-          </motion.button>
+          </button>
         ))}
       </div>
     </section>
